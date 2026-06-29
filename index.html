@@ -107,7 +107,6 @@
             color: var(--text-main);
             margin-bottom: 35px;
             font-weight: 500;
-            /* 👇 This forces text to wrap nicely inside the card borders 👇 */
             word-wrap: break-word;
             white-space: normal;
         }
@@ -232,6 +231,7 @@ const questionBank = [
 
 let currentQuestion = null;
 let words = [];
+let revealedWords = [];
 let currentWordIndex = 0;
 let timer = null;
 let isPower = true;
@@ -266,6 +266,7 @@ function nextQuestion() {
     
     currentQuestion = questionBank.shift(); 
     words = currentQuestion.text.split(" ");
+    revealedWords = [];
     currentWordIndex = 0;
     isPower = true;
     state = "READING";
@@ -287,8 +288,12 @@ function revealWord() {
             currentWordIndex++;
             return;
         }
-        /* 👇 Fixed: Adds a space character explicitly after each appended word 👇 */
-        document.getElementById("question-box").innerText += word + " ";
+        
+        // Add word to our list of seen words
+        revealedWords.push(word);
+        
+        // Join them back together cleanly with spaces using .join(" ")
+        document.getElementById("question-box").innerText = revealedWords.join(" ");
         currentWordIndex++;
     } else {
         clearInterval(timer);
