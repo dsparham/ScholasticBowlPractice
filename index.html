@@ -107,6 +107,9 @@
             color: var(--text-main);
             margin-bottom: 35px;
             font-weight: 500;
+            /* 👇 This forces text to wrap nicely inside the card borders 👇 */
+            word-wrap: break-word;
+            white-space: normal;
         }
 
         .action-zone {
@@ -212,9 +215,6 @@
 </div>
 
 <script>
-// --- YOUR QUESTION BANK ---
-// You can add more items to this list following the exact same format!
-// The (*) marks where the "Power" (15 points) window ends.
 const questionBank = [
     {
         text: "This state's city of Gary was founded by US Steel. (*) Its capital is home to a famous 500-mile auto race. For 10 points, name this Midwestern state that borders Illinois and Ohio, with capital Indianapolis.",
@@ -287,6 +287,7 @@ function revealWord() {
             currentWordIndex++;
             return;
         }
+        /* 👇 Fixed: Adds a space character explicitly after each appended word 👇 */
         document.getElementById("question-box").innerText += word + " ";
         currentWordIndex++;
     } else {
