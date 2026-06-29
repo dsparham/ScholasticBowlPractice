@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholastic Bowl Trainer</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 2.2rem;
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 35px;
+            border: 1px solid var(--border);
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        #status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #e0f2fe;
+            color: #0369a1;
+            transition: all 0.3s ease;
+        }
+
+        #question-box {
+            min-height: 140px;
+            font-size: 1.35rem;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-bottom: 35px;
+            font-weight: 500;
+        }
+
+        .action-zone {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        button:disabled {
+            background-color: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 450px;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            outline: none;
+            display: none;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+            text-align: center;
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .instructions {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 25px;
+        }
+
+        kbd {
+            background: #e2e8f0;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-weight: 600;
+            font-family: inherit;
+            border-bottom: 2px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Scholastic Bowl Trainer</h1>
+        <p>NAQT Middle School Practice Engine</p>
+    </header>
+
+    <div class="game-card">
+        <div class="dashboard">
+            <div class="stat-box">
+                <div class="stat-label">Total Score</div>
+                <div id="score" class="stat-value">0</div>
+            </div>
+            <div id="status-badge">Ready</div>
+        </div>
+
+        <div id="question-box">Click "Next Question" below to begin reading the tossup.</div>
+        
+        <div class="action-zone">
+            <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+            <input type="text" id="answer-input" placeholder="Type answer and press Enter..." onkeydown="submitAnswer(event)">
+        </div>
+
+        <div class="instructions">
+            Press <kbd>Spacebar</kbd> at any time to buzz in.
+        </div>
+    </div>
+</div>
+
+<script>
+// --- YOUR QUESTION BANK ---
+// You can add more items to this list following the exact same format!
+// The (*) marks where the "Power" (15 points) window ends.
+const questionBank = [
+    {
+        text: "This state's city of Gary was founded by US Steel. (*) Its capital is home to a famous 500-mile auto race. For 10 points, name this Midwestern state that borders Illinois and Ohio, with capital Indianapolis.",
+        answer: "indiana"
+    },
+    {
+        text: "This author wrote about a giant dog on the Baskerville moors. (*) He also created the character Dr. John Watson. For 10 points, name this British author who created the detective Sherlock Holmes.",
+        answer: "arthur conan doyle"
+    },
+    {
+        text: "This musical instrument contains a bell, a spit valve, and a long outer slide (*) rather than valves. For 10 points, name this brass instrument whose name translates from Italian as 'large trumpet'.",
+        answer: "trombone"
+    }
+];
+
+let currentQuestion = null;
+let words = [];
+let currentWordIndex = 0;
+let timer = null;
+let isPower = true;
+let score = 0;
+let state = "IDLE";
+
+function updateStatus(text, type) {
+    let badge = document.getElementById("status-badge");
+    badge.innerText = text;
+    if (type === 'success') {
+        badge.style.background = '#d1fae5';
+        badge.style.color = '#065f46';
+    } else if (type === 'danger') {
+        badge.style.background = '#fee2e2';
+        badge.style.color = '#991b1b';
+    } else if (type === 'warn') {
+        badge.style.background = '#fef3c7';
+        badge.style.color = '#92400e';
+    } else {
+        badge.style.background = '#e0f2fe';
+        badge.style.color = '#0369a1';
+    }
+}
+
+function nextQuestion() {
+    if (questionBank.length === 0) {
+        document.getElementById("question-box").innerText = "🏆 Packets complete! Great practice session.";
+        updateStatus("Finished", "success");
+        document.getElementById("next-btn").disabled = true;
+        return;
+    }
+    
+    currentQuestion = questionBank.shift(); 
+    words = currentQuestion.text.split(" ");
+    currentWordIndex = 0;
+    isPower = true;
+    state = "READING";
+    
+    document.getElementById("question-box").innerText = "";
+    document.getElementById("answer-input").style.display = "none";
+    document.getElementById("answer-input").value = "";
+    updateStatus("Reading...", "info");
+    document.getElementById("next-btn").disabled = true;
+    
+    timer = setInterval(revealWord, 230);
+}
+
+function revealWord() {
+    if (currentWordIndex < words.length) {
+        let word = words[currentWordIndex];
+        if (word === "(*)") {
+            isPower = false;
+            currentWordIndex++;
+            return;
+        }
+        document.getElementById("question-box").innerText += word + " ";
+        currentWordIndex++;
+    } else {
+        clearInterval(timer);
+        state = "IDLE";
+        updateStatus("Time's Up", "warn");
+        document.getElementById("next-btn").disabled = false;
+    }
+}
+
+window.addEventListener("keydown", function(e) {
+    if (e.code === "Space" && state === "READING") {
+        e.preventDefault();
+        buzz();
+    }
+});
+
+function buzz() {
+    clearInterval(timer);
+    state = "BUZZED";
+    updateStatus("BUZZ!", "danger");
+    let input = document.getElementById("answer-input");
+    input.style.display = "inline-block";
+    input.focus();
+}
+
+function submitAnswer(event) {
+    if (event.key === "Enter") {
+        let userAnswer = document.getElementById("answer-input").value.trim().toLowerCase();
+        let correctAnswer = currentQuestion.answer.toLowerCase();
+        
+        if (userAnswer === correctAnswer || (correctAnswer.includes(userAnswer) && userAnswer.length > 3)) {
+            let points = isPower ? 15 : 10;
+            score += points;
+            updateStatus(`CORRECT! (+${points})`, "success");
+            revealAll();
+        } else {
+            if (currentWordIndex < words.length) {
+                score -= 5;
+                updateStatus("INCORRECT (-5)", "danger");
+                resumeReading();
+            } else {
+                updateStatus("INCORRECT (0)", "danger");
+                revealAll();
+            }
+        }
+        document.getElementById("score").innerText = score;
+    }
+}
+
+function resumeReading() {
+    state = "READING";
+    document.getElementById("answer-input").style.display = "none";
+    document.getElementById("answer-input").value = "";
+    updateStatus("Reading...", "info");
+    timer = setInterval(revealWord, 230);
+}
+
+function revealAll() {
+    state = "IDLE";
+    document.getElementById("question-box").innerText = currentQuestion.text.replace("(*) ", "");
+    document.getElementById("answer-input").style.display = "none";
+    document.getElementById("next-btn").disabled = false;
+}
+</script>
+
+</body>
+</html>
